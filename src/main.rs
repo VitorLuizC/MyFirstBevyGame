@@ -23,12 +23,10 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
+        .add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
         .add_startup_system(spawn_camera)
+        .add_startup_system(spawn_player)
         // Runs before any of the startup systems.
-        .add_startup_system_to_stage(
-            StartupStage::PreStartup,
-            load_ascii
-        )
         .add_plugins(DefaultPlugins)
         .run();
 }
@@ -88,4 +86,23 @@ fn load_ascii(
 
     let atlas_handle = texture_atlases.add(atlas);
     commands.insert_resource(AsciiSheet(atlas_handle));
+}
+
+fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
+    let mut sprite = TextureAtlasSprite::new(1);
+
+    sprite.color = Color::rgb(0.3, 0.3, 0.9);
+    sprite.custom_size = Some(Vec2::splat(1.0));
+
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            sprite: sprite,
+            texture_atlas: ascii.0.clone(),
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 900.0),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Name::new("Player"));
 }
