@@ -1,3 +1,4 @@
+use bevy::asset::AssetServer;
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 use bevy::window::PresentMode;
@@ -23,6 +24,11 @@ fn main() {
             ..Default::default()
         })
         .add_startup_system(spawn_camera)
+        // Runs before any of the startup systems.
+        .add_startup_system_to_stage(
+            StartupStage::PreStartup,
+            load_ascii
+        )
         .add_plugins(DefaultPlugins)
         .run();
 }
@@ -49,4 +55,37 @@ fn spawn_camera(mut commands: Commands) {
     camera.orthographic_projection.scaling_mode = ScalingMode::None;
 
     commands.spawn_bundle(camera);
+}
+
+// Just hold the copy of the ascii handle.
+struct AsciiSheet(Handle<TextureAtlas>);
+
+// Graphics
+// --------
+// Spritesheets and other assets.
+
+// Assets
+// ------
+// They *need* to be placed at "./assets" folder in order to Bevy's assets
+// manager find your files.
+
+// Atlas
+// -----
+// An atlas is a texture that contains multiple smaller textures. Its a map that
+// points to the location of each texture in a spritesheet.
+
+fn load_ascii(
+    mut commands: Commands,
+    // Its added by 'DefaultPlugins'.
+    assets: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    let image = assets.load("ascii.png");
+
+    // We're using padding to prevent the bleeding of pixels in the tiles.
+    let atlas =
+        TextureAtlas::from_grid_with_padding(image, Vec2::splat(9.0), 16, 16, Vec2::splat(2.0));
+
+    let atlas_handle = texture_atlases.add(atlas);
+    commands.insert_resource(AsciiSheet(atlas_handle));
 }
