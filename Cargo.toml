@@ -13,5 +13,6 @@ opt-level = 3
 
 [dependencies]
 # !important: The dynamic feature should be disabled before releasing the game!
-bevy = { version = "0.7.0", features = ["dynamic"] }
 # bevy = "0.7.0"
+bevy = { version = "0.7.0", features = ["dynamic"] }
+bevy-inspector-egui = "0.11.0"
