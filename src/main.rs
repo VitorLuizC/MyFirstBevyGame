@@ -5,12 +5,15 @@ use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
 use bevy::window::PresentMode;
 
-mod player;
-use player::PlayerPlugin;
-
 pub const CLEAR: Color = Color::rgb(0.0, 0.0, 0.0);
 
 pub const RESOLUTION: f32 = 16.0 / 9.0;
+
+pub const TILE_SIZE: f32 = 0.1;
+
+mod player;
+use player::PlayerPlugin;
+
 
 fn main() {
     let height: f32 = 800.0;
